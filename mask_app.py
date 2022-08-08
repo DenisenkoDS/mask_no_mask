@@ -27,15 +27,15 @@ from detectron2.data import MetadataCatalog, DatasetCatalog
 def initialization():
     #создаём модель с сохранёнными параметрами
     register_coco_instances("mask_train", {}, 
-                         "/home/anna/ds_bootcamp/ds_offline/model_mask_no_mask/Mask_no_mask-10/train/_annotations.coco.json", 
-                         "/home/anna/ds_bootcamp/ds_offline/model_mask_no_mask/Mask_no_mask-10/train")
+                         "train/_annotations.coco.json", 
+                         "train")
     cfg = get_cfg()
     cfg.MODEL.DEVICE = "cpu"
     cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"))
-    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "/home/anna/ds_bootcamp/ds_offline/model_mask_no_mask/model_final.pth")  # путь к обученной модели
+    cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "/home/anna/ds_bootcamp/ds_offline/project_29.07.22/model_final.pth")  # путь к обученной модели
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = 4
     # устанавливаем порог обнаружения
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.85
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.9
 
     # создаем объект для построения предсказаний
     predictor = DefaultPredictor(cfg)
@@ -66,7 +66,7 @@ def main():
 
     # Streamlit initialization
     st.title('Распознавание лица в маске и без маски с Detectron2 Fast R-CNN X101-FPN')
-    st.write('Наша задача - детекция объектов. Нам необходимо выделить несколько объектов на изображении через нахождение координат их ограничивающих рамок и классифировать этих ограничивающих рамок из множества заранее известных классов.')
+    st.write('Наша задача - детекция объектов. Мы используем Detectron2, популярную библиотеку модульных моделей компьютерного зрения на основе PyTorch. Мы самостоятельно маркировали свои данные для обучения модели с помощью Roboflow и предобучили модель Fast R-CNN X101-FPN.')
     st.image('images/output_example2.png')
 
     # Retrieve image
@@ -77,7 +77,7 @@ def main():
         # Detection code
         outputs = inference(predictor, img)
         out_image = output_image(cfg, img, outputs)
-        st.image(out_image, caption='Надо подождать...', use_column_width=True)        
+        st.image(out_image, caption='Результат', use_column_width=True)        
 
 
 if __name__ == '__main__':
